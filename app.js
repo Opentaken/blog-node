@@ -6,6 +6,7 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var logger = require('morgan');
 var fs = require('fs');
+var ejsMate = require('ejs-mate');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -21,6 +22,8 @@ app.use(logger('combined',{stream:accessLogStream}));//将日志写入文件
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.engine('ejs', require('ejs-mate'));
+app.locals._layoutFile = 'layout/layout-body.ejs';
 
 app.use(logger('dev'));
 
