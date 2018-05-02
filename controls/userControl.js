@@ -60,30 +60,57 @@ var UserControl = {
                 gender: gender,
                 bio: bio
             }).save(function(err,result){
-                console.log(result);
-                // 此 user 是插入 mongodb 后的值，包含 _id
-                user = result;
-                // 删除密码这种敏感信息，将用户信息存入 session
-                delete user.password
-                req.session.user = user
-                // 写入 flash
-                req.flash('success', '注册成功')
-                // 跳转到首页
-                res.redirect('/')
+                if(err){
+                    console.log(err)
+                    // 注册失败，异步删除上传的头像
+                    fs.unlink(req.files.avatar.path)
+                    // 用户名被占用则跳回注册页，而不是错误页
+                    if (err.message.match('duplicate key')) {
+                        req.flash('error', '用户名已被占用');
+                        return res.redirect('/users/signup');
+                    }
+                    next();
+                }else {
+                    // 此 user 是插入 mongodb 后的值，包含 _id
+                    user = result;
+                    // 删除密码这种敏感信息，将用户信息存入 session
+                    delete user.password;
+                    req.session.user = user;
+                    // 写入 flash
+                    req.flash('success', '注册成功');
+                    // 跳转到首页
+                    res.redirect(303,'/');
+                }
+
             });
 
 
         }catch (e){
-            // 注册失败，异步删除上传的头像
-            fs.unlink(req.files.avatar.path)
-            // 用户名被占用则跳回注册页，而不是错误页
-            if (e.message.match('duplicate key')) {
-                req.flash('error', '用户名已被占用')
-                return res.redirect('/signup')
-            }
-            next(e)
+
         }
 
+    },
+    //登录
+    signIn: function(req,res,next){
+        var name = req.files.name,
+            password = req.files.password;
+        console.log(name)
+        console.log(password)
+        User.findOne({name:name},function(err,result){
+            var user = result;
+            var pwdMatchFlag =bcrypt.compareSync(password, user.password);
+            if(pwdMatchFlag){
+                // 删除密码这种敏感信息，将用户信息存入 session
+                delete user.password;
+                req.session.user = user;
+                //写入flash
+                req.flash('success', '登录成功');
+                res.redirect(303,'/');
+            }else {
+                req.flash('error', '用户名或密码错误');
+                res.redirect(303,'/users/signin');
+            }
+        })
     }
 }
 
