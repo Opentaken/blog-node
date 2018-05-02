@@ -37,7 +37,9 @@ var UserControl = {
             }
         }catch (e){
             // 注册失败，异步删除上传的头像
-            fs.unlink(req.files.avatar.path)
+            if(req.files.avatar.name){
+                fs.unlink(req.files.avatar.path);
+            }
             req.flash('error', e.message);
             res.redirect(303,'/users/signup');
         }
@@ -61,13 +63,13 @@ var UserControl = {
                 bio: bio
             }).save(function(err,result){
                 if(err){
-                    console.log(err)
+                    //console.log(err)
                     // 注册失败，异步删除上传的头像
                     fs.unlink(req.files.avatar.path)
                     // 用户名被占用则跳回注册页，而不是错误页
                     if (err.message.match('duplicate key')) {
                         req.flash('error', '用户名已被占用');
-                        return res.redirect('/users/signup');
+                        //return res.redirect('/users/signup');
                     }
                     next();
                 }else {
