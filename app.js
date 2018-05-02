@@ -51,6 +51,54 @@ if(config.isRedis){
   }));
 }
 
+/**
+ * 数据库链接
+ */
+
+var mongoose = require('mongoose');
+var opts = {
+    server: {
+        socketOptions: {keepAlive: 1}
+    }
+};
+switch (app.get('env')){
+    case 'development':
+        mongoose.connect(config.mongo.development.connectionString ,opts);
+        /**
+         * 连接成功
+         */
+        mongoose.connection.on('connected', function () {
+            console.log('Mongoose connection  success');
+        });
+
+        /**
+         * 连接异常
+         */
+        mongoose.connection.on('error',function (err) {
+            console.log('Mongoose connection error: ' + err);
+        });
+
+        /**
+         * 连接断开
+         */
+        mongoose.connection.on('disconnected', function () {
+            console.log('Mongoose connection disconnected');
+        });
+        mongoConnectionString = config.mongo.development.connectionString;
+        break;
+    case 'production':
+        mongoose.connect(config.mongo.production.connectionString, opts);
+        mongoConnectionString = config.mongo.production.connectionString;
+        break;
+    default:
+        throw new Error('Unknown execution environment: ' + app.get('env'));
+}
+
+// 处理表单及文件上传的中间件
+app.use(require('express-formidable')({
+    uploadDir: path.join(__dirname, 'public/img'), // 上传文件目录
+    keepExtensions: true// 保留后缀
+}));
 
 //通过路径区分路由文件
 app.use('/', indexRouter);

@@ -6,5 +6,13 @@ module.exports = {
     pass: '', //redis数据库密码
     db: 1, //redis数据库索引，默认 0
     logErrors: true //redis错误打印
+  },
+  mongo:{
+    development:{
+      connectionString: 'mongodb://localhost:27017/blog-node',
+    },
+    production:{
+      connectionString: ''
+    }
   }
 }
