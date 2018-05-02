@@ -2,6 +2,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var flash = require('connect-flash');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var logger = require('morgan');
@@ -50,6 +51,9 @@ if(config.isRedis){
     saveUninitialized: true,
   }));
 }
+
+//注入flash
+app.use(flash());
 
 /**
  * 数据库链接
@@ -100,6 +104,14 @@ app.use(require('express-formidable')({
     keepExtensions: true// 保留后缀
 }));
 
+//操作会话中间件
+app.use(function(req, res, next){
+     //如果有即显消息，把它传到上下文中，然后清除它
+     res.locals.flash = req.session.flash;
+     delete req.session.flash;
+     next();
+ });
+
 //通过路径区分路由文件
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -116,7 +128,7 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
+   return res.status(err.status || 500);
   res.render('error');
 });
 
