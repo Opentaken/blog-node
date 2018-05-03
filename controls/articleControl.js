@@ -4,6 +4,21 @@
 
 var ArticleModel = require('../models/article.js');
 
+/**
+ * 截取内容返回描述
+ * @param content
+ * @returns {string}
+ */
+function getDescription(content){
+    var description = '';
+    if(content.length>50){
+        description = content.substr(0,50) + '...';
+    }else {
+        description = content;
+    }
+    return description;
+}
+
 var ArticleControl = {
     //添加文章
     create: function(req,res,next){
@@ -46,7 +61,30 @@ var ArticleControl = {
             }
         });
 
-    }
+    },
+
+    //文章列表
+    getList: function(req,res,next){
+        var id = req.query.id || null;
+        ArticleModel.count({},function(err,count){
+            ArticleModel.fetch(id,function(err,result){
+                if(err){
+                    next(err);
+                }else {
+                    //整合数据
+                    var articles = result.map(function(item){
+                        return {
+                            id: item._id,
+                            title: item.title,
+                            content: getDescription(item.content)
+                        }
+                    });
+                    res.render('articleList',{ title: '文章列表', articles: articles, count: count });
+                }
+            })
+        });
+    },
+
 }
 
 module.exports = ArticleControl;

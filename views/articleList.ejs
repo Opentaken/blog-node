@@ -1,1 +1,10 @@
-<div>文章列表</div>
+<div class="ui list">
+    <% articles.forEach(function(article){%>
+    <div class="item">
+        <a href="/article/detail/<%= article.id %>">
+            <h2 class="header"><%= article.title %></h2>
+            <div><%= article.content %></div>
+        </a>
+    </div>
+    <% })%>
+</div>

@@ -20,8 +20,24 @@ var articleSchema = new Schema({
     pv: Number
 });
 
-//articleSchema.index({ title: 1 }, { unique: true })// 添加索引
+articleSchema.index({ title: -1 })// 添加索引
+articleSchema.statics = {
+    fetch:function(id, cb) {
+        if (id) {
+            return this.find({'_id': {"$lt": id}})
+                .limit(10)
+                .sort({'_id':-1})
+                .exec(cb);
+        }else {
+            return this.find({})
+                .limit(10)
+                .sort({'_id':-1})
+                .exec(cb);
+        }
 
+    }
+}
 var Article = mongoose.model('Article', articleSchema);
+
 
 module.exports = Article;
