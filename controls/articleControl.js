@@ -3,7 +3,8 @@
  */
 
 var ArticleModel = require('../models/article.js');
-
+var User = require('../models/user.js');
+var moment = require('moment');//时间格式化组件
 /**
  * 截取内容返回描述
  * @param content
@@ -25,9 +26,6 @@ var ArticleControl = {
         var author = req.session.user._id,
             title = req.fields.title,
             content = req.fields.content;
-        console.log(author);
-        console.log(title);
-        console.log(content);
         // 校验参数
         try {
             if (!author.length) {
@@ -40,8 +38,8 @@ var ArticleControl = {
                 throw new Error('请填写文章内容');
             }
         } catch (e) {
-            req.flash('error', e.message)
-            return res.redirect('back')
+            req.flash('error', e.message);
+            return res.redirect('back');
         }
 
         //保存到数据库
@@ -49,7 +47,8 @@ var ArticleControl = {
             author: author,
             title: title,
             content: content,
-            pv: 0
+            pv: 0,
+            publishDate: new Date()
         }).save(function(err,result){
             if(err){
                 req.flash('error',err.message);
@@ -84,6 +83,40 @@ var ArticleControl = {
             })
         });
     },
+
+    //文章详情
+    getDetail: function(req,res,next){
+        var id = req.params.id;
+        try{
+            if(!id){
+                throw new Error('没有文章id');
+            }
+        }catch (e){
+            req.flash('error', e.message);
+            return res.redirect('back');
+        }
+        ArticleModel.findOne({_id: id},function(err,detail){
+            if(err){
+                return res.redirect('back');
+            }else {
+                User.findOne({_id: detail.author},function(err,user){
+                    if(err){
+                        return res.redirect('back');
+                    }else {
+                        var articleDetail = {
+                            title: detail.title,
+                            content: detail.content,
+                            publishDate: moment(detail.publishDate).format('YYYY-MM-DD HH:mm:ss'),
+                            author: user.name
+                        }
+                        res.render('articleDetail',{ detail: articleDetail });
+                    }
+                });
+            }
+
+        });
+
+    }
 
 }
 

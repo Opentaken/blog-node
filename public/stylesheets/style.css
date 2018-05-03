@@ -74,3 +74,9 @@ a:hover {
 .post-content .tag.right a {
   color: #999;
 }
+.text-center{
+  text-align: center;
+}
+.mt-20{
+  margin-top: 20px;
+}

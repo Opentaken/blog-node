@@ -9,6 +9,7 @@ var Schema = mongoose.Schema;
  * title: 文章标题
  * content: 文章内容
  * pv: 点击量
+ * publishDate: 发布时间
  */
 
 var ObjectId = mongoose.Schema.Types.ObjectId;
@@ -17,7 +18,8 @@ var articleSchema = new Schema({
     author: ObjectId,
     title: String,
     content: String,
-    pv: Number
+    pv: Number,
+    publishDate: Date
 });
 
 articleSchema.index({ title: -1 })// 添加索引
