@@ -11,6 +11,7 @@ var ejsMate = require('ejs-mate');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var articleRouter = require('./routes/article');
 const config = require('./config')
 
 var app = express();
@@ -115,6 +116,7 @@ app.use(function(req, res, next){
 //通过路径区分路由文件
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/article',articleRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
