@@ -94,8 +94,21 @@ var UserControl = {
     },
     //登录
     signIn: function(req,res,next){
-        var name = req.files.name,
-            password = req.files.password;
+        var name = req.fields.name,
+            password = req.fields.password;
+
+        // 校验参数
+        try {
+            if (!name.length) {
+                throw new Error('请填写用户名')
+            }
+            if (!password.length) {
+                throw new Error('请填写密码')
+            }
+        } catch (e) {
+            req.flash('error', e.message)
+            return res.redirect('back')
+        }
         console.log(name)
         console.log(password)
         User.findOne({name:name},function(err,result){

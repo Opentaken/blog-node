@@ -21,10 +21,6 @@ router.get('/signin', function (req, res, next) {
   res.render('signin');
 });
 
-router.get('/signiny', function (req, res, next) {
-  res.render('signin');
-});
-
 router.post('/signin', UserControl.signIn);
 
 module.exports = router;
