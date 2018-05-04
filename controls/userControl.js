@@ -36,12 +36,16 @@ var UserControl = {
                 throw new Error('两次输入密码不一致')
             }
         }catch (e){
+            console.log("-------")
+            console.log(e.message)
+            console.log("-------")
             // 注册失败，异步删除上传的头像
             if(req.files.avatar.name){
                 fs.unlink(req.files.avatar.path);
             }
             req.flash('error', e.message);
             res.redirect(303,'/users/signup');
+            return
         }
 
         //生成salt的迭代次数
