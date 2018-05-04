@@ -16,6 +16,15 @@ const config = require('./config')
 
 var app = express();
 
+if (!fs.existsSync(__dirname+'/logs')) {
+    console.log("创建日志文件夹")
+    fs.mkdirSync(__dirname+'/logs');
+}
+if (!fs.existsSync(__dirname+'/public/img')) {
+    console.log("创建图片文件夹")
+    fs.mkdirSync(__dirname+'/public/img');
+}
+
 //log
 var accessLogStream = fs.createWriteStream(__dirname+'/logs/access.log',{flags:'a'});
 app.use(logger('combined',{stream:accessLogStream}));//将日志写入文件
