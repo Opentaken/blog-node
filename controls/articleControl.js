@@ -95,29 +95,35 @@ var ArticleControl = {
             req.flash('error', e.message);
             return res.redirect('back');
         }
-        ArticleModel.findOne({_id: id},function(err,detail){
-            if(err){
-                return res.redirect('back');
-            }else {
-                User.findOne({_id: detail.author},function(err,user){
-                    if(err){
-                        return res.redirect('back');
-                    }else {
-                        var articleDetail = {
-                            title: detail.title,
-                            content: detail.content,
-                            publishDate: moment(detail.publishDate).format('YYYY-MM-DD HH:mm:ss'),
-                            author: user.name
-                        }
-                        res.render('articleDetail',{ detail: articleDetail });
-                    }
-                });
-            }
 
-        });
+        ArticleModel.findOne({_id: id})
+            .populate({ path: 'author',select: {name: 1, _id: 1}, model: 'User' })
+            .sort({_id: -1})
+            .exec(function(err,detail){
+                if(err){
+                    return res.redirect('back');
+                }
+                var articleDetail = {
+                    title: detail.title,
+                    content: detail.content,
+                    publishDate: moment(detail.publishDate).format('YYYY-MM-DD HH:mm:ss'),
+                    pv:detail.pv,
+                    author: detail.author.name,
+                    authorId: detail.author._id
+                }
+                res.render('articleDetail',{ detail: articleDetail });
+            });
+    },
 
+    // 更新文章的pv
+    //@param id 文章id
+    updatePvByArticle: function(req,res,next){
+        var id = req.params.id;
+        ArticleModel.update({ _id: id }, { $inc: { pv: 1 } })
+            .exec(function(){
+                next();
+            });
     }
-
 }
 
 module.exports = ArticleControl;

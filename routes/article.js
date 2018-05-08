@@ -14,6 +14,6 @@ router.get('/create',function(req,res,next){
 
 router.post('/create',articleControl.create);
 
-router.get('/detail/:id',articleControl.getDetail);
+router.get('/detail/:id',articleControl.updatePvByArticle,articleControl.getDetail);
 
 module.exports = router;
