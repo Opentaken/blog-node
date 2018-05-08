@@ -84,45 +84,28 @@ var ArticleControl = {
         });
     },
 
-    //文章详情
-    getDetail: function(req,res,next){
-        var id = req.params.id;
-        try{
-            if(!id){
-                throw new Error('没有文章id');
-            }
-        }catch (e){
-            req.flash('error', e.message);
-            return res.redirect('back');
-        }
 
-        ArticleModel.findOne({_id: id})
-            .populate({ path: 'author',select: {name: 1, _id: 1}, model: 'User' })
-            .sort({_id: -1})
-            .exec(function(err,detail){
-                if(err){
-                    return res.redirect('back');
-                }
-                var articleDetail = {
-                    title: detail.title,
-                    content: detail.content,
-                    publishDate: moment(detail.publishDate).format('YYYY-MM-DD HH:mm:ss'),
-                    pv:detail.pv,
-                    author: detail.author.name,
-                    authorId: detail.author._id
-                }
-                res.render('articleDetail',{ detail: articleDetail });
-            });
+    /**
+     * 通过文章id获取详情
+     * @param id 文章id
+     * @returns {Promise}
+     */
+
+    getDetailById: function(id){
+        return ArticleModel.findOne({_id: id})
+                .populate({ path: 'author',select: {name: 1, _id: 1}, model: 'User' })
+                .sort({_id: -1})
+                .exec();
     },
 
-    // 更新文章的pv
-    //@param id 文章id
-    updatePvByArticle: function(req,res,next){
-        var id = req.params.id;
-        ArticleModel.update({ _id: id }, { $inc: { pv: 1 } })
-            .exec(function(){
-                next();
-            });
+    /**
+     * 更新文章的pv
+     * @param id 文章id
+     * @returns {Array|{index: number, input: string}|Promise}
+     */
+    updatePvByArticle: function(id){
+        return ArticleModel.update({ _id: id }, { $inc: { pv: 1 } })
+                .exec();
     }
 }
 
