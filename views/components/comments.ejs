@@ -1,0 +1,36 @@
+<div class="ui grid text container" style="margin-top: 50px">
+    <div class=" wide column">
+        <div class="ui segment">
+            <div class="ui minimal comments">
+                <h3 class="ui dividing header">留言</h3>
+
+                <% comments.forEach(function (comment) { %>
+                <div class="comment">
+                    <span class="avatar">
+                      <img src="/img/<%= comment.author.avatar %>">
+                    </span>
+                    <div class="content">
+                        <a class="author" href="/posts?author=<%= comment.author._id %>"><%= comment.author.name %></a>
+                        <div class="metadata">
+                            <span class="date"><%= comment.time %></span>
+                        </div>
+                        <div class="text"><%- comment.content %></div>
+                    </div>
+                </div>
+                <% }) %>
+
+
+                <% if (user) { %>
+                <form class="ui reply form" method="post" action="/comment"  enctype="multipart/form-data">
+                    <input name="articleId" value="<%= detail.id %>" hidden>
+                    <div class="field">
+                        <textarea name="content"></textarea>
+                    </div>
+                    <input type="submit" class="ui icon button" value="留言" />
+                </form>
+                <% } %>
+
+            </div>
+        </div>
+    </div>
+</div>

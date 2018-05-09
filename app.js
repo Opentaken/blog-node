@@ -12,6 +12,7 @@ var ejsMate = require('ejs-mate');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var articleRouter = require('./routes/article');
+var commentRouter = require('./routes/comment');
 const config = require('./config')
 
 var app = express();
@@ -116,6 +117,11 @@ app.use(require('express-formidable')({
 
 //操作会话中间件
 app.use(function(req, res, next){
+    if(!res.locals.user && !req.session.user){
+        res.locals.user = null;
+    }else if(!res.locals.user && req.session.user){
+        res.locals.user = req.session.user;
+    }
      //如果有即显消息，把它传到上下文中，然后清除它
      res.locals.flash = req.session.flash;
      delete req.session.flash;
@@ -126,6 +132,8 @@ app.use(function(req, res, next){
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/article',articleRouter);
+app.use('/comment',commentRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
