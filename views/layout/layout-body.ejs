@@ -8,31 +8,30 @@
     <script src="/js/semantic.min.js"></script>
 </head>
 <body>
-<div class="nav">
-    <div class="ui grid">
-        <div class="four wide column"></div>
-
-    </div>
-    <div class="nav-setting">
-        <div class="ui buttons">
-            <div class="ui floating dropdown button">
-                <i class="icon bars"></i>
-                <div class="menu">
-
-                    <a class="item" href="/posts?author=1">个人主页</a>
-                    <div class="divider"></div>
-                    <a class="item" href="/posts/create">发表文章</a>
-                    <a class="item" href="/signout">登出</a>
-
-                    <a class="item" href="/signin">登录</a>
-                    <a class="item" href="/signup">注册</a>
-
+<div class="ui fixed inverted menu">
+    <div class="ui container">
+        <a href="#" class="header item">
+           <!-- <img class="logo" src="assets/images/logo.png">-->
+            Blog Node
+        </a>
+        <a href="/" class="item">首页</a>
+        <a href="/article" class="item">文章</a>
+        <div class="right menu">
+            <div class="item">
+                <div class="ui transparent inverted icon input">
+                    <i class="search icon"></i>
+                    <input type="text" placeholder="Search">
                 </div>
+            </div>
+            <a class="item">搜索</a>
+            <div class="item">
+                <a href="/users/signin">登录</a>/
+                <a href="/users/signup">注册</a>
             </div>
         </div>
     </div>
 </div>
-<section>
+<section style="margin-top: 7em;">
     <%-body -%>
 </section>
 </body>
