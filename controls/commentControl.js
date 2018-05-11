@@ -28,6 +28,12 @@ var CommentControl ={
             res.redirect('back');
         });
     },
+    insertSubComment: function(req,res,next){
+        var commentId = req.params.id,
+            from = req.session.user._id,
+            to = req.fields.to,
+            content = req.fields.content;
+    },
     getComments: function(articleId){
         return Comments.find({article_id: articleId})
             .populate({path: 'author', select: {name: 1, _id: 1,avatar: 1}, model: 'User'})

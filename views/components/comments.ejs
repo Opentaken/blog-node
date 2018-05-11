@@ -5,18 +5,45 @@
                 <h3 class="ui dividing header">留言</h3>
 
                 <% comments.forEach(function (comment) { %>
-                <div class="comment">
+                <div class="comment-list">
+                    <div class="comment">
                     <span class="avatar">
                       <img src="/img/<%= comment.author.avatar %>">
                     </span>
-                    <div class="content">
-                        <a class="author" href="/posts?author=<%= comment.author._id %>"><%= comment.author.name %></a>
-                        <div class="metadata">
-                            <span class="date"><%= comment.time %></span>
+                        <span class="reply-btn">回复</span>
+                        <div class="content">
+                            <a class="author" href="/article?author=<%= comment.author._id %>"><%= comment.author.name %></a>
+                            <div class="metadata">
+                                <span class="date"><%= comment.time %></span>
+                            </div>
+                            <div class="text"><%- comment.content %></div>
                         </div>
-                        <div class="text"><%- comment.content %></div>
                     </div>
+                    <% if(comment.comments.length > 0){ %>
+                    <div class="comment sub-comment">
+                        <div class="content sub-comment-content">
+                            <a class="author" href="/article?author=<%= comment.author._id %>"><%= comment.author.name %></a>
+                            @
+                            <a class="author" href="/article?author=<%= comment.author._id %>"><%= comment.author.name %></a>
+                            <div class="metadata">
+                                <span class="date"><%= comment.time %></span>
+                            </div>
+                            <div class="text"><%- comment.content %></div>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!--回复begin-->
+                    <form class="ui form mb-30" method="post" action="/comment/<%= comment.id %>"  enctype="multipart/form-data">
+                        <input name="to" value="<%= comment.author._id %>" hidden>
+                        <div class="field">
+                            <textarea name="content" rows="3"></textarea>
+                        </div>
+                        <input type="submit" class="ui icon button" value="回复" />
+                    </form>
+                    <!--回复end-->
                 </div>
+
                 <% }) %>
 
 
